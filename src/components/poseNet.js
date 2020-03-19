@@ -1,46 +1,65 @@
 import React ,{useEffect,useRef,useState}from "react"
 import * as ml5 from 'ml5' //import ml5
-
+import Sketch from "react-p5"
 //collect the poses as required
 
 export default function PoseNet({webcamRef}){
 
-const [pose, setPose] = useState(null);
-
 
    let poseNet
-   
+   let video
+   let x
+   let y
 
-  const classifyImg =() =>{
-      poseNet = ml5.poseNet(webcamRef.current.video, () => {
-          console.log("posetnet model loaded")
-      })
-      poseNet.on("pose", gotPoses);
-      let options={
-        inputs: 34, // The total Array length of every keypoinst. ( nose, eyes, ear...etc)
-        outputs: 4, // The number of label that we assigned ( in my case, I only have either "Do Squats" or "Not" )
-        task: "classification", // This type will give you the discrete reslut that we labeled
-        debug: true // Give you a UI while training the data.
-      }
-  }
-  const gotPoses = poses => {
-    if (poses.length > 0) {
-      setPose(poses[0].pose);
-      console.log(poses[0].pose)
-    }
-  };
+   const loadPoseNet = () => {
+       poseNet = ml5.poseNet(webcamRef.current.video, modelLoaded) //initialize ml5.posenet
+   }
+
+
+   function modelLoaded() {
+       console.log("model loaded")
+   }
+   function gotPoses(poses){
+       if(poses.length > 0){
+         console.log(poses[0].pose)
+          
+          
+         
+       }
+   }
+   
+   const setup = (p5, webcamRef) => {
+    p5.createCanvas(680, 540).parent(webcamRef); // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
+    video = p5.createCapture(p5.VIDEO)
+    video.hide();  
+
+};
+
+ const draw = p5 => {
+       
+       p5.image(video, 0, 0)
+       p5.fill(255,0,0)
+       p5.ellipse(20, 20, 70, 70);
+   }
 
     useEffect(()=>{
-       
-        if(webcamRef){
-            console.log("yaha aairaxa")
-            //webcamRef.current.video.style.display = "none";
-
+         if(webcamRef){
+             webcamRef.current.video.style.display = "none";
          }
-         classifyImg()
+         loadPoseNet()
+         poseNet.on('pose', gotPoses)
+         
 
     },[])
+
+ 
+    
+
     return(
-    <h1>{ml5.version}</h1>
+        <div>
+            <h1>{ml5.version}</h1>
+            <Sketch setup={setup} draw={draw}/>
+        </div>
+    
     )
 }

@@ -5,7 +5,7 @@ import Webcam from "react-webcam"
 export default function SetWebCam({webcamRef}){
 
 
-    const videoConstraints={width:680, height:540}
+    const videoConstraints={width:1080, height:840}
     
     
     return(
