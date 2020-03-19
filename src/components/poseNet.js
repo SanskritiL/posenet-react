@@ -5,8 +5,8 @@ import P5 from "./P5";
 
 export default function PoseNet({ webcamRef }) {
   let poseNet;
-  const [pose, setPose] = useState(null);
-  //const [skeleton, setSkeleton] = useState(null)
+  const [poses, setPoses] = useState(null);
+  
 
   const loadPoseNet = () => {
     poseNet = ml5.poseNet(webcamRef.current.video, () => {
@@ -14,8 +14,8 @@ export default function PoseNet({ webcamRef }) {
     }); //initialize ml5.posenet
     poseNet.on("pose", poses => {
       if (poses.length > 0) {
-        setPose(poses[0].pose);
-        //setSkeleton(poses[])
+        setPoses(poses[0]);
+       
       }
     });
   };
@@ -38,7 +38,7 @@ export default function PoseNet({ webcamRef }) {
   return (
     <div>
       <h1>{ml5.version}</h1>
-      <P5 pose={pose} />
+      <P5 poses={poses} />
     </div>
   );
 }
