@@ -12,9 +12,9 @@ export default function SetWebCam({webcamRef}){
         //react webcam library
         <Webcam 
           audio={false}
-          height={540}
+          height={840}
           ref={webcamRef}
-          width={680}
+          width={1080}
           videoConstraints={videoConstraints}
         />
     )

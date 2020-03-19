@@ -1,10 +1,16 @@
 import React from "react"
-import Sketch from "react-p5"
+import sketch from "./Sketch"
+import P5Wrapper from "react-p5-wrapper"
 
-export default function P5(props){
 
+export default function P5({pose}){
+ //console.log("p5 ko pose", pose)
+ 
     return(
-        <h5>p5 js</h5>
+       <div>
+            <h3>p5 loaded</h3>
+           <P5Wrapper sketch={sketch} pose={pose} />
+       </div>
     )
 
 }
