@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ml5 from "ml5"; //import ml5
 import P5 from "./P5";
+import DATA_JSON from './ymca.json'
 
 //collect the poses as required
 let brain;
 let poseNet;
-let x=1;
 
 export default function PoseNet({ webcamRef }) {
 
@@ -15,6 +15,9 @@ export default function PoseNet({ webcamRef }) {
   const [poses, setPoses] = useState(null);
   const [dataState, setDataState] = useState("waiting");
   const [inputArray, setInputArray] = useState([]);
+  const [targetLabel, setTargetLabel] = useState(null)
+
+
 
   const loadPoseNet = () => {
     
@@ -31,7 +34,7 @@ export default function PoseNet({ webcamRef }) {
       debug: true
     };
     brain = ml5.neuralNetwork(options);
-    x = 5;
+    
   };
 
   const gotPoses = poses => {
@@ -41,8 +44,9 @@ export default function PoseNet({ webcamRef }) {
   }
 
   //sets the data collection state
-  function collectDataMode() {
-    console.log("button pressed. you've got 10 secs");
+  function collectDataMode(key) {
+    setTargetLabel(key)
+    console.log(targetLabel , " button pressed. you've got 5 secs");
      setTimeout(() => {
        setDataState("collecting");
        setTimeout(() => {
@@ -50,6 +54,11 @@ export default function PoseNet({ webcamRef }) {
        }, 10000);
      }, 5000);
    }
+
+  
+
+
+
 
 
   useEffect(() => {
@@ -74,23 +83,48 @@ export default function PoseNet({ webcamRef }) {
   }, [poses]);
 
   useEffect(() => {
-    console.log(x)
+    
     if (dataState === "collecting") {
-      brain.addData(inputArray, ["Y"])
+      let target = [targetLabel]
+      brain.addData(inputArray, target)
     };
   }, [inputArray]);
  
   const saveTrainingData = () => {
     brain.saveData()
   }
+  const loadData = () => {
+    brain.loadData(DATA_JSON, dataReady)
+  }
+ const dataReady = () => {
+  console.log("ok data ready")
+   brain.normalizeData()
+   brain.train({epochs: 10}, finished);
+ }
+ const finished = () => {
+   console.log("model trained")
+   brain.save()
+ }
+
+
 
   return (
     <div>
       <h1>{ml5.version}</h1>
       <h2>{dataState}</h2>
-      <button onClick={collectDataMode}> Collect Data </button>
+      <button onClick={ () => collectDataMode("Y")}> Collect Data Y</button>
+      <button onClick={() => collectDataMode("C")}> Collect Data C</button>
+      <button onClick={() => collectDataMode("M")}> Collect Data M</button>
+      <button onClick={() => collectDataMode("A")}> Collect Data A</button>
+     <hr></hr>
+
+
+      <button onClick={loadData}> Load Data </button>
       <button onClick={saveTrainingData}> save Data </button>
       <P5 poses={poses} />
     </div>
   );
 }
+
+
+

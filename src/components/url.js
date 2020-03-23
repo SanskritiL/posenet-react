@@ -1,0 +1,1 @@
+export const DATA_JSON = "http://localhost:3000/data"
