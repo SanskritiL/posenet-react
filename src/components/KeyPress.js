@@ -7,15 +7,11 @@ let deta;
 export default function KeyPress() {
 
   const loadPoseNet = () => {
-
-
-   
-
     let options = {
       inputs: 34,
       outputs: 4,
       task: "classification",
-      debug: false
+      debug: true
     };
     brain = ml5.neuralNetwork(options);
     brain.loadData('data/ymca.json',dataReady)
