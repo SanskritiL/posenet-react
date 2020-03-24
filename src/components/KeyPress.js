@@ -1,57 +1,59 @@
 import React, { useState, useEffect } from "react";
+import * as ml5 from "ml5"; //import ml5
+
+let brain;
+let deta;
 
 export default function KeyPress() {
-  // Call our hook for each key that we'd like to monitor
-  const happyPress = useKeyPress("a");
-  const sadPress = useKeyPress("s");
-  const robotPress = useKeyPress("c");
-  const foxPress = useKeyPress("m");
-  const yellowPress = useKeyPress("y");
-  
-  return (
-    <div>
-      <div>a, s, c, m, y</div>
-      
-      <div>
-        {happyPress && "😊 Aclicked"}
-        {sadPress && "😢 S clicked"}
-        {robotPress && "🤖 C clicked"}
-        {foxPress && "🦊 M clicked"}
-        {yellowPress && "✊Y clicked"}
-      </div>
-    </div>
-  );
-  }
 
-function useKeyPress(targetKey) {
-  const [keyPressed, setKeyPressed] = useState(false);
+  const loadPoseNet = () => {
 
-  //if pressed key is our target key then set true
-  function downHandler({ key }) {
-    if (key === targetKey) {
-      setKeyPressed(true);
-      
-    }
-  }
-  // If released key is our target key then set to false
-  const upHandler = ({ key }) => {
-    if (key === targetKey) {
-      setKeyPressed(false);
-    }
-  };
 
-  // Add event listeners
-  useEffect(() => {
-    window.addEventListener("keydown", downHandler);
-    window.addEventListener("keyup", upHandler);
-    
-    // Remove event listeners on cleanup
-    return () => {
-      window.removeEventListener("keydown", downHandler);
-     // window.removeEventListener("keyup", upHandler);
+   
+
+    let options = {
+      inputs: 34,
+      outputs: 4,
+      task: "classification",
+      debug: false
     };
+    brain = ml5.neuralNetwork(options);
+    brain.loadData('data/ymca.json',dataReady)
+  };
+  // function onload(){
 
-  }, [keyPressed]); // Empty array ensures that effect is only run on mount and unmount
+  //   fetch('data/ymca.json').then(res=> res.json()).then(data => console.log(data))
+  //   const options = {
+  //     //dataUrl: 'data/ymca.json',
+  //     task: 'classification', // or 'regression'
+  //     inputs: 34, // r, g, b
+  //     outputs: 4// red-ish, blue-ish
+  //   }
+  //   nn = ml5.neuralNetwork(options,dataLoaded)
   
-  return keyPressed;
+  // }
+  function dataReady(){
+    console.log("data readay")
+    // nn.loadData('data/ymca.json')
+  
+     brain.normalizeData()
+     trainModel()
+  }
+  function trainModel(){
+    console.log("training model")
+    const trainingOptions = {
+      epochs: 32,
+      batchSize: 12
+    }
+    brain.train(trainingOptions, finishedTraining);
+  }
+  function finishedTraining(){
+     brain.save()
+  }
+
+ 
+
+  return(
+    <button onClick={() => loadPoseNet()}>Load Data</button>
+  )
 }

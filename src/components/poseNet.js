@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ml5 from "ml5"; //import ml5
 import P5 from "./P5";
-import DATA_JSON from './ymca.json'
-
+import {DATA_JSON} from './url'
+import KeyPress from './KeyPress'
 //collect the poses as required
 let brain;
 let poseNet;
+
 
 export default function PoseNet({ webcamRef }) {
 
@@ -31,7 +32,7 @@ export default function PoseNet({ webcamRef }) {
       inputs: 34,
       outputs: 4,
       task: "classification",
-      debug: true
+      debug: false
     };
     brain = ml5.neuralNetwork(options);
     
@@ -85,27 +86,25 @@ export default function PoseNet({ webcamRef }) {
   useEffect(() => {
     
     if (dataState === "collecting") {
-      let target = [targetLabel]
-      brain.addData(inputArray, target)
+      brain.addData(inputArray, [targetLabel])
     };
   }, [inputArray]);
  
   const saveTrainingData = () => {
+    console.log("normalziign")
+    brain.normalizeData()
     brain.saveData()
   }
-  const loadData = () => {
-    brain.loadData(DATA_JSON, dataReady)
-  }
+  
  const dataReady = () => {
-  console.log("ok data ready")
-   brain.normalizeData()
+  console.log("ok data ready") 
    brain.train({epochs: 10}, finished);
  }
  const finished = () => {
    console.log("model trained")
    brain.save()
  }
-
+ 
 
 
   return (
@@ -119,8 +118,9 @@ export default function PoseNet({ webcamRef }) {
      <hr></hr>
 
 
-      <button onClick={loadData}> Load Data </button>
+      
       <button onClick={saveTrainingData}> save Data </button>
+      <KeyPress />
       <P5 poses={poses} />
     </div>
   );
