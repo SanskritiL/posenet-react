@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ml5 from "ml5"; //import ml5
 import P5 from "./P5";
-import {DATA_JSON} from './url'
+
 import KeyPress from './KeyPress'
 import Deploy from './Deploy'
 //collect the poses as required

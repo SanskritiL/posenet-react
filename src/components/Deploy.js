@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import * as ml5 from "ml5"; //import ml5
 let brain;
 let poseNet;
+let poseLabel;
 export default function Deploy({ webcamRef }) {
   const [pose, setPose] = useState(null);
   const [inputArray, setInputArray] = useState(null);
@@ -56,7 +57,9 @@ export default function Deploy({ webcamRef }) {
 
   function gotResults(error, results) {
     if (results) {
-      console.log(results[0].label);
+      poseLabel = results[0].label
+      console.log(results[0].confidence);
+      
     }
   }
 

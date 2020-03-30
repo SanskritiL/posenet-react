@@ -1,9 +1,12 @@
 import React,{useState} from "react"
+
+
 export default function sketch(p) {
     let rotation = 0;
     let poses;
     let video;
-    
+    let brain;
+   let poseLabel ='Y'
     
     //console.log("here")
     p.setup = function () {
@@ -41,6 +44,13 @@ export default function sketch(p) {
             p.stroke(255, 20, 147)
             p.line(a.position.x, a.position.y, b.position.x, b.position.y)
          }
+
+         p.fill(255,0,255)
+         p.noStroke()
+         p.textSize(256)
+         p.textAlign(p.CENTER, p.CENTER);
+         p.text(poseLabel, video.width/2, video.height/2)
+
          
         }
       
