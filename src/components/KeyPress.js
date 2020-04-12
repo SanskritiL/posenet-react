@@ -5,7 +5,6 @@ let brain;
 let deta;
 
 export default function KeyPress() {
-
   const loadPoseNet = () => {
     let options = {
       inputs: 34,
@@ -14,7 +13,7 @@ export default function KeyPress() {
       debug: true
     };
     brain = ml5.neuralNetwork(options);
-    brain.loadData('data/ymca.json',dataReady)
+    brain.loadData("data/ymca.json", dataReady);
   };
   // function onload(){
 
@@ -26,30 +25,26 @@ export default function KeyPress() {
   //     outputs: 4// red-ish, blue-ish
   //   }
   //   nn = ml5.neuralNetwork(options,dataLoaded)
-  
+
   // }
-  function dataReady(){
-    console.log("data readay")
+  function dataReady() {
+    console.log("data readay");
     // nn.loadData('data/ymca.json')
-  
-     brain.normalizeData()
-     trainModel()
+
+    brain.normalizeData();
+    trainModel();
   }
-  function trainModel(){
-    console.log("training model")
+  function trainModel() {
+    console.log("training model");
     const trainingOptions = {
       epochs: 32,
       batchSize: 12
-    }
+    };
     brain.train(trainingOptions, finishedTraining);
   }
-  function finishedTraining(){
-     brain.save()
+  function finishedTraining() {
+    brain.save();
   }
 
- 
-
-  return(
-    <button onClick={() => loadPoseNet()}>Load Data</button>
-  )
+  return <button onClick={() => loadPoseNet()}>Load Data</button>;
 }
