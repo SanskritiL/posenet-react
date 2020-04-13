@@ -7,26 +7,32 @@ import similarity from "compute-cosine-similarity";
 // poseVector1 and poseVector2 are a L2 normalized 34-float vectors (17 keypoints each
 // with an x and y. 17 * 2 = 32)
 
+function poseSimilarity(pose1, pose2){
+    const poseVector1 = getPoseVector(pose1);
+    // console.log(poseVector1)
+    const poseVector2 = getPoseVector(pose2);
+    // console.log(poseVector2)
+    return cosineDistanceMatching(poseVector1, poseVector2);
+}
 
 function getPoseVector(pose) {
-    const xPos = pose.keypoints.map(k => k.position.x);
-    const yPos = pose.keypoints.map(k => k.position.y);
-  
-    let minX = Math.min(...xPos);
-    // let maxX = Math.max(...keypoint.position.x);
-    let minY = Math.min(...yPos);
-    // let maxY = Math.max(...keypoint.position.y);
-  
-    const vector = [];
-    for (let i = 0; i < xPos.length; i++) {
-      vector.push(xPos[i] - minX);
-      vector.push(yPos[i] - minY);
-    }
-    return vector;
+    if(pose){
+        const xPos = pose.keypoints.map(k => k.position.x);
+        const yPos = pose.keypoints.map(k => k.position.y);
+    
+        let minX = Math.min(...xPos);
+        // let maxX = Math.max(...keypoint.position.x);
+        let minY = Math.min(...yPos);
+        // let maxY = Math.max(...keypoint.position.y);
+    
+        const vector = [];
+        for (let i = 0; i < xPos.length; i++) {
+        vector.push(xPos[i] - minX);
+        vector.push(yPos[i] - minY);
+        }
+        return vector;
+   }
   }
-
-
-
 
 function cosineDistanceMatching(poseVector1, poseVector2) {
     if (poseVector1 && poseVector2) {
@@ -36,72 +42,60 @@ function cosineDistanceMatching(poseVector1, poseVector2) {
     }
 }
 
-// poseVector1 and poseVector2 are 52-float vectors composed of:
-// Values 0-33: are x,y coordinates for 17 body parts in alphabetical order
-// Values 34-51: are confidence values for each of the 17 body parts in alphabetical order
-// Value 51: A sum of all the confidence values
-// Again the lower the number, the closer the distance
 
-function weightedDistanceMatching(poseVector1, poseVector2) {
-  if (poseVector1 && poseVector2) {
-    // console.log("user ko pose", poseVector2);
-    // console.log("photo ko pose", poseVector1);
-    let vector1PoseXY = poseVector1.slice(0, 34);
-    let vector1Confidences = poseVector1.slice(34, 51);
-    let vector1ConfidenceSum = poseVector1.slice(51, 52);
-
-    let vector2PoseXY = poseVector2.slice(0, 34);
-
-    // First summation
-    let summation1 = 1 / vector1ConfidenceSum;
-
-    // Second summation
-    let summation2 = 0;
-    for (let i = 0; i < vector1PoseXY.length; i++) {
-      let tempConf = Math.floor(i / 2);
-      let tempSum =
-        vector1Confidences[tempConf] *
-        Math.abs(vector1PoseXY[i] - vector2PoseXY[i]);
-      summation2 = summation2 + tempSum;
-    }
-
-    return summation1 * summation2;
-  }
-}
-
-export default function Output({ poseVector1, poseVector2 }) {
+export default function Output({ pose1, pose2 }) {
   const [score, setScore] = useState(0);
+  const [color, setColor] = useState("red");
+  const [text, setText] = useState("wrong");
 
-  useEffect(()=>{
-     let tempscore = cosineDistanceMatching(poseVector1, poseVector2)
-     console.log(tempscore)
-     setScore(tempscore)
-  },[poseVector2,poseVector1])
 
-  return <h1>{score}</h1>;
+
+  function css() {
+    
+    if (score > 70) {
+        console.log("yaha")
+      setText("Good");
+      setColor("#4BB543");
+    } else if (score  > 50 && score< 70) {
+      setText("Okay");
+      setColor("#9080bc");
+      console.log("teha")
+
+    } 
+    else {
+        console.log("neha")
+      setText("wrong");
+      setColor("#FF2C2C");
+    }
+  }
+
+        //  console.log("pose1", pose1)
+        //  console.log("pose2", pose2)
+        useEffect(()=>{
+            let scores = poseSimilarity(pose1,pose2)
+            let roundedscore = Math.round(scores*100)/100
+            setScore(roundedscore*100)
+            css()
+        },[pose1,pose2])
+
+        //   useEffect(()=>{
+//      let tempscore = poseSimilarity(pose1, pose2)
+//     //  console.log(tempscore)
+//      setScore(tempscore)
+//   },[pose1,pose2])
+
+    return (
+    <div>
+      <h2 style={{ 'color': color}}>
+       {text} {score}%
+      </h2>
+    </div>
+  );
+
 }
 
-//   const [color, setColor] = useState("red");
-//   const [text, setText] = useState("wrong");
-
-//   console.log(typeof props.output);
-
-//   function css() {
-//     if (props.output > 70) {
-//       setText("Good");
-//       setColor("#4BB543");
-//     } else if (props.output > 55 && props.output < 70) {
-//       setText("Okay");
-//       setColor("#9080bc");
-//     } else {
-//       setText("wrong");
-//       setColor("#FF2C2C");
-//     }
-//   }
-
-//   useEffect(() => {
-//     css();
-//   }, []);
+  
+  
 
 //   useEffect(() => {
 //     css();

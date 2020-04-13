@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ml5 from "ml5"; //import ml5
 import P5 from "./P5";
-import KeyPress from "./KeyPress";
 import Output from "./Output";
 
 
@@ -11,7 +10,7 @@ let poseNet;
 
 export default function PoseNet({ webcamRef }) {
   const [poses, setPoses] = useState(null);
-  
+  const[pose,setPose] = useState(null);
   // const [dataState, setDataState] = useState("waiting");
   // const [inputArray, setInputArray] = useState([]);
   const [targetArray, setTargetArray] = useState(null);
@@ -42,17 +41,34 @@ export default function PoseNet({ webcamRef }) {
       }, 5000)
   }
 
-  function getArray() {
-    if (poses) {
-      let tempInputArray = poses.pose.keypoints
-        .map(item => {
-          return [Math.round(item.position.x * 100)/100, Math.round(item.position.y * 100)/100];
-        })
-        .flat();
-      setPoseVector2(tempInputArray);
+  // function getArray() {
+  //   if (poses) {
+  //     set
+      // const xPose = poses.pose.keypoints.map(k => k.position.x);
+      // const yPose = poses.pose.keypoints.map(k => k.position.y);
+
+      // let minX = Math.min(...xPose);
+      // // let maxX = Math.max(...keypoint.position.x);
+      // let minY = Math.min(...yPose);
+      // // let maxY = Math.max(...keypoint.position.y);
+
+      // const vect = [];
+      // for (let i = 0; i < xPose.length; i++) {
+      //   vect.push(xPose[i] - minX);
+      //   vect.push(yPose[i] - minY);
+      // }
+      // setPoseVector2(vect)
+
+
+      // let tempInputArray = poses.pose.keypoints
+      //   .map(item => {
+      //     return [Math.round(item.position.x * 100)/100, Math.round(item.position.y * 100)/100];
+      //   })
+      //   .flat();
+      // setPoseVector2(tempInputArray);
       
-    }
-  }
+  //   }
+  // }
 
 
 
@@ -62,18 +78,36 @@ export default function PoseNet({ webcamRef }) {
     .then(res => res.json())
     .then((data)=> {
         let tempArr = Object.keys(data);
+        //  console.log(targetArray)
+      
         tempArr.map((pose_item) => {
           if(pose_item === image){
             setTargetArray(data[pose_item])
           }
         } )
-        if(targetArray){
-          let temp = targetArray.keypoints.map(item => {
-            return [item.position.x,item.position.y];
-          }).flat();
-          setPoseVector1(temp);
+        // if(targetArray){
+
+        //  const xPos = targetArray.keypoints.map(k => k.position.x)
+        //  const yPos = targetArray.keypoints.map(k => k.position.y)
+
+        //   let minX = Math.min(...xPos);
+        //   // let maxX = Math.max(...keypoint.position.x);
+        //   let minY = Math.min(...yPos);
+        //   // let maxY = Math.max(...keypoint.position.y);
+
+        //   const vector = [];
+        //   for (let i = 0; i < xPos.length; i++) {
+        //     vector.push(xPos[i] - minX);
+        //     vector.push(yPos[i] - minY);
+        //   }
+        //   setPoseVector1(vector);
+
+          // let temp = targetArray.keypoints.map(item => {
+          //   return [item.position.x,item.position.y];
+          // }).flat();
+         
           // console.log("The actual pose: " , posevector1)
-        }
+       // }
     })
 
   }, [counter])
@@ -99,15 +133,17 @@ export default function PoseNet({ webcamRef }) {
   const gotPoses = poses => {
     if (poses.length > 0) {
       setPoses(poses[0]);
+      setPose(poses[0].pose)
     //  console.log("users pose: " ,inputArray)
     }
   };
 
 
-  useEffect(()=>{
-    getArray()
-    // console.log(posevector2)
-  },[poses])
+  // useEffect(()=>{
+  //   setPose(pose)
+   
+  //   // console.log(posevector2)
+  // },[pose])
 
 //  //There's a better way to do this!!
 //   function collectDataMode(key) {
@@ -196,7 +232,7 @@ export default function PoseNet({ webcamRef }) {
         <h3>Given pose: {image}</h3>
       </div>
       <P5 poses={poses} /> 
-      <Output  poseVector1={posevector1} poseVector2={posevector2}/>
+      <Output  pose1={targetArray} pose2={pose}/>
     </div>
   );
 }
