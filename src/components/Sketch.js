@@ -37,15 +37,15 @@ export default function sketch(p) {
       poses.pose.keypoints.map(item => {
         let x = item.position.x;
         let y = item.position.y;
-        p.fill(255, 192, 203);
-        p.ellipse(x, y, 17);
+        p.fill(0, 255, 0 );
+        p.ellipse(x, y, 9);
       });
 
       for (let i = 0; i < poses.skeleton.length; i++) {
         let a = poses.skeleton[i][0];
         let b = poses.skeleton[i][1];
         // p.fill(230)
-        p.strokeWeight(3);
+        p.strokeWeight(1);
         p.stroke(255, 20, 147);
         p.line(a.position.x, a.position.y, b.position.x, b.position.y);
       }
