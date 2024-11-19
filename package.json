@@ -9,7 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "array-normalize": "^1.1.4",
     "compute-cosine-similarity": "^1.0.0",
-    "firebase": "^7.14.0",
+    "firebase": "^10.9.0",
     "firebaseui": "^4.5.0",
     "ml5": "^0.5.0",
     "react": "^16.13.0",
